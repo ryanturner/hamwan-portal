@@ -15,6 +15,7 @@ from models import Record
 from portal.models import Subnet
 from portal.network import reverse
 from forms import RecordForm
+from django.conf import settings
 
 
 class RecordCreate(CreateView):
@@ -60,7 +61,7 @@ class RecordDelete(DeleteView):
     def get_object(self, queryset=None):
         """ Hook to ensure object is owned by request.user. """
         obj = super(RecordDelete, self).get_object()
-        subdomain = "%s.hamwan.net" % self.request.user.username.lower()
+        subdomain = "%s.%s" % (self.request.user.username.lower(), ROOT_DOMAIN)
         subnets = Subnet.objects.filter(owner=self.request.user)
 
         if obj.name != subdomain and \
@@ -97,7 +98,7 @@ class RecordListView(ListView):
 @login_required
 def own_dns(request):
     # own_hosts = Host.objects.select_related('owner').filter(owner=request.user)
-    hostname_suffix = "%s.hamwan.net" % request.user.username
+    hostname_suffix = "%s.%s" % (request.user.username, ROOT_DOMAIN)
     user_subnets = Subnet.objects.filter(owner=request.user)
     return render(request, 'dns/dns.html', {
         'own_dns':  Record.objects.filter(

@@ -6,11 +6,12 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 from django.core.management.base import BaseCommand, CommandError
 from portal.models import Subnet, IPAddress
+from django.conf import settings
 
 
 # Audit these networks. Modify as needed.
 NETWORKS = map(IPNetwork, [
-    '44.24.240.0/20',
+    IP_NETWORK,
     '44.25.0.0/16',
 ])
 RFC1918 = map(IPNetwork, [

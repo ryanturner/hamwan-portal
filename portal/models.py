@@ -7,6 +7,7 @@ from django.template.loader import render_to_string
 
 from hamwanadmin.settings import DATABASES
 from dns.models import Record, Domain
+from django.conf import settings
 
 from fields import MACAddressField
 from network import reverse, IPAddressField, IPNetworkField, IPNetworkQuerySet
@@ -96,7 +97,7 @@ class Host(models.Model):
         return self.name
 
     def fqdn(self):
-        return "%s.hamwan.net" % self.name
+        return "%s.%s" % (self.name, ROOT_DOMAIN)
 
     @models.permalink
     def get_absolute_url(self):
@@ -136,9 +137,9 @@ class IPAddress(models.Model):
 
     def fqdn(self):
         if self.interface:
-            return "%s.%s.hamwan.net" % (self.interface, self.host.name)
+            return "%s.%s.%s" % (self.interface, self.host.name, ROOT_DOMAIN)
         else:
-            return "%s.hamwan.net" % (self.host.name)
+            return "%s.%s" % (self.host.name, ROOT_DOMAIN)
 
     def _generate_ptr(self, domain=False):
         # If domain=True, return a PTR for the /48 or /24
@@ -157,7 +158,7 @@ class IPAddress(models.Model):
                 self._remove_dns()
 
         new_a, created = Record.objects.get_or_create(
-            domain=Domain.objects.get(name='hamwan.net'),
+            domain=Domain.objects.get(name=ROOT_DOMAIN),
             name=self.fqdn().lower(),
             type=self.ip.version == 6 and 'AAAA' or 'A',
             content=self.ip,
@@ -187,7 +188,7 @@ class IPAddress(models.Model):
 
         if self.primary and self.interface != "":
             new_cname, created = Record.objects.get_or_create(
-                domain=Domain.objects.get(name='hamwan.net'),
+                domain=Domain.objects.get(name=ROOT_DOMAIN),
                 name=self.host.fqdn().lower(),
                 type='CNAME',
                 defaults={'content': self.fqdn().lower(), 'auth': True},

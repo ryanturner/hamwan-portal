@@ -4,6 +4,7 @@ from django import forms
 
 from portal.models import Subnet
 from models import Record
+from django.conf import settings
 
 
 class RecordForm(forms.ModelForm):
@@ -20,7 +21,7 @@ class RecordForm(forms.ModelForm):
         instance = getattr(self, 'instance', None)
         name = self.cleaned_data['name'].lower()
         user = self.request.user
-        subdomain = "%s.hamwan.net" % user.username.lower()
+        subdomain = "%s.%s" % (user.username.lower(), ROOT_DOMAIN)
         subnets = Subnet.objects.filter(owner=user)
 
         if instance and instance.pk:

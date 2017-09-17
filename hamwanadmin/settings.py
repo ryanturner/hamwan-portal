@@ -16,6 +16,9 @@ DATABASES = {
     },
 }
 
+ROOT_DOMAIN = 'hamwan.net'
+IP_NETWORK = '44.24.240.0/20'
+
 DATABASE_ROUTERS = ['hamwanadmin.dbrouter.DnsRouter', ]
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False

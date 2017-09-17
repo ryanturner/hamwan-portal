@@ -11,6 +11,7 @@ from datetime import datetime
 
 from django.core.mail import send_mail
 from django.db import models
+from django.conf import settings
 
 from hamwanadmin.settings import AMPR_DNS_FROM, AMPR_DNS_TO, AMPR_DNS_QUEUE
 
@@ -71,7 +72,7 @@ class Record(models.Model):
         self.content = self.content.lower()
 
     def _generate_ampr_dns(self, command):
-        if self.name.endswith('hamwan.net') and self.type in ('A', 'CNAME'):
+        if self.name.endswith(ROOT_DOMAIN) and self.type in ('A', 'CNAME'):
             name = self.name.split('.net')[0]
             return "%s %s %s %s" % (name, command, self.type, self.content)
 
@@ -101,7 +102,7 @@ class Record(models.Model):
             self.change_date = current_serial + 1
 
     def save(self, *args, **kwargs):
-        if self.name.endswith('hamwan.net') and self.type in ('A', 'CNAME'):
+        if self.name.endswith(ROOT_DOMAIN) and self.type in ('A', 'CNAME'):
             self._save_ampr_dns_command()
         self.update_change_date()
         super(Record, self).save(*args, **kwargs)
@@ -125,4 +126,3 @@ class Record(models.Model):
 #     secret = models.CharField(max_length=255, blank=True)
 #     class Meta:
 #         db_table = 'tsigkeys'
-
