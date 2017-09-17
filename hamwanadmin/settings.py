@@ -137,7 +137,7 @@ INSTALLED_APPS = (
     # 'map',
     'south',
     'utils',
-    'debug_toolbar',
+    # 'debug_toolbar',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
